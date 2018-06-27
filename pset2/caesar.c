@@ -10,7 +10,7 @@ int main(int argc, string argv[]){
     string word = get_string("plaintext: "); //get user input as string
     string newword = word;
 
-    // convert input argument into integer
+    // convert input argument into integer //test
     // int index = atoi(argv[1]);
 
     for(int i=0; i<strlen(word); i++){
