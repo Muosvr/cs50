@@ -1,0 +1,65 @@
+Debugging..................................
+
+help50:
+Provide explanations to errors. Looks at the first error if many
+e.g. help50 make example1
+
+eprintf (as opposed to just printf):
+also prints the line where it comes from
+
+debug50:
+putting break points in programs
+
+Functions.................................
+
+- function declaration on top before main
+format:
+return-type name (argument-list)
+e.g. int add_two_ints (int a, int b);
+
+Scope .................................
+global: variables declared outside of function
+to make to more clear: float global = 0.434
+
+Arrays.....................................
+- a fundamental data structure
+- C does not prevent you from accessing outside of declared array. Upon runtime will give segmentation error because access out of bound
+- declaration:
+type name[size]
+e.g. int student_grades[40]
+- instatiation:
+e.g. bool truthtable[ ] = { false, true, true }; (size unnecessary in this case)
+e.g. bool truthtable[3] = true;
+- might give error if assign a value to index outside of a declared array
+- can consist of more than one dimension:
+e.g. bool battleship[10][10] (although exist as single dimensional array in memory)
+- in C, arrays cannot be assigned/copied directly to another array, need to copy values individually using loop
+- Most variables in C are passed by value, arrays however are passed by reference. Meaning the callee receives the actual array, not a copy of it
+
+Command Line Arguments................
+e.g. int main ( int argc, string argv[ ] ){ }
+- argc: argument count. How many arguments users provide divided by space
+- argv: argument vector(array)
+- first element of argv is always found at argv[0]
+- last element at argv[argc-1]
+- everything in argv is stored as string
+
+Magic Numbers......................................
+- preprocessor directive(macro)
+#define NAME REPLACEMENT
+e.g. #define PI 3.141592653
+(all caps is a convention but not required)
+
+Pset2 Caesar Walkthrough............................
+useful functions:++++++++++
+atoi: convert float to integers
+isalpha: shift letters only, turns boolean
+isupper, islower: preserve capitalization, returns boolean
+strlen(text): returns length of a string
+++++++++++++++++++++++++++++++++
+- ASCII chart
+- Ci = (Pi +k) % 26 e.g.
+- When letters are in single quotation mark they are treated as integers
+- ('A' +2) % 26 = (65+2) % 26
+- ASCII vs alphabetical index
+- characters inside a text can be index like from an array
