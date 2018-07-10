@@ -5,27 +5,35 @@
 #include <unistd.h>
 #define _XOPEN_SOURCE
 
-int
-main(void){
-  /* Hashed form of "GNU libc manual". */
-//   const char *const pass = "$1$/iSaq7rB$EoUw5jJPPvAPECNaaWzMK/";
-    const char *const pass = "50JGnXUgaafgc"; //the salt is 50
+//main function gets an encrypted message as a string argument
 
-  char *result;
-  int ok;
+//throw error if
 
-//   do{
+//generate an array of size 52 containing all upper and lower case letters in alphabet
 
-//   }while()
+//generate an array of size 52*52 ...
 
-  /* Read in the user’s password and encrypt it,
-     passing the expected password in as the salt. */
-  result = crypt(get_string("Password:"), pass);
+//array of size 52^3
 
-  /* Test the result. */
-  ok = strcmp (result, pass) == 0;
+//array of size 52^4
 
-//   puts(ok ? "Access granted." : "Access denied.");
-//   return ok ? 0 : 1;
-     printf("%i\n",ok) ;
+//array of size 52^5
+
+//create an array of alphabetical characters a-zA-Z
+
+//loop 5 times and empty arrays of size 52^i where is between 1 and 5
+
+///in each loop append a character from the a-Z array
+
+///
+
+int main(void){
+    string array[380204032]; //limitation in bytes?
+
+    for (int i=0; i <380204032; i++){
+        array[i] = "A";
+    }
+    printf("%s",array[99]);
 }
+
+
