@@ -30,7 +30,7 @@
 int main(void){
     string array[380204032]; //limitation in bytes?
 
-    for (int i=0; i <380204032; i++){
+    for (long i=0; i <380204032; i++){
         array[i] = "A";
     }
     printf("%s",array[99]);
