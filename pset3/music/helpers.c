@@ -12,12 +12,13 @@ int main(void){
     //     return 1;
     // }
 
-    string s = get_string("Input: ");
+    string s = get_string("Input duration: ");
     printf("%i\n",duration(s));
     // duration(s);
-    string n = get_string("Input2: ");
+    string n = get_string("Input note: ");
     printf("%s\n", is_rest(n) ? "true": "false");
     return 0;
+
 }
 
 // Converts a fraction formatted as X/Y to eighths
@@ -33,10 +34,35 @@ int duration(string fraction)
 }
 
 // Calculates frequency (in Hz) of a note
-// int frequency(string note)
-// {
-//     // TODO
-// }
+int frequency(string note)
+{
+    // TODO
+
+    //declare int oct to count octave number away from 4
+
+    //convert first character into a position index, relative to the positin to A in the order of: CDEFGAB e.g. position of B will be 1, position of D will be -4
+    //n = position*2
+    int nkey = note[0];
+    if (nkey < 'B'){
+        nkey = nkey-64;
+    }else if(nkey > 'B'){
+        nkey = nkey -
+    }
+
+    //check if second character is in alphabet
+
+    ///if yes check if it is a '#'' or a 'b'
+    ////if # n = n+1
+    ////if b: n = n-1
+    ///convert thrid character: oct = third character - 4
+
+    ///else if second character not in alphabet, oct = third charcter - 4
+
+    //n= n*2^oct
+
+    //frenquency = 2^(n/12)*440
+
+}
 
 // Determines whether a string represents a rest
 bool is_rest(string s)
