@@ -73,7 +73,7 @@ int frequency(string note)
     n = n*2^oct;
 
     //frenquency = 2^(n/12)*440
-
+    return frequency = 2^(n/12)*440;
 }
 
 // Determines whether a string represents a rest
