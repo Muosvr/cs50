@@ -39,6 +39,7 @@ int frequency(string note)
     // TODO
 
     //declare int oct to count octave number away from 4
+    int oct;
 
     //convert first character into a position index, relative to the positin to A in the order of: CDEFGAB e.g. position of B will be 1, position of D will be -4
     //n = position*2
@@ -63,10 +64,13 @@ int frequency(string note)
             n = n - 1;
         }
     ///convert thrid character: oct = third character - 4
-
+        oct = note[2] - 48;
     ///else if second character not in alphabet, oct = third charcter - 4
+    }else{
+        oct = note[1] - 48;
     }
-    //n= n*2^oct
+    //n= n*2^oct calculate new n based on octave of the note
+    n = n*2^oct;
 
     //frenquency = 2^(n/12)*440
 
