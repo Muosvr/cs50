@@ -44,20 +44,28 @@ int frequency(string note)
     //n = position*2
     int nkey = note[0];
     if (nkey < 'B'){
-        nkey = nkey-64;
+        nkey = nkey-65;
     }else if(nkey > 'B'){
-        nkey = nkey -
+        nkey = nkey - 72;
     }
+    printf("%i\n", nkey);
 
     //check if second character is in alphabet
 
-    ///if yes check if it is a '#'' or a 'b'
-    ////if # n = n+1
-    ////if b: n = n-1
+    if (isalpha(note[1])){
+
+        //if yes check if it is a '#'' or a 'b'
+        if (strcmp(note[1],"#") == 0){
+            //if # n = n+1
+            n = n + 1;
+        }else if(strcmp(note[1],"b") == 0){
+            //if b: n = n-1
+            n = n - 1;
+        }
     ///convert thrid character: oct = third character - 4
 
     ///else if second character not in alphabet, oct = third charcter - 4
-
+    }
     //n= n*2^oct
 
     //frenquency = 2^(n/12)*440
