@@ -43,13 +43,14 @@ int frequency(string note)
 
     //convert first character into a position index, relative to the positin to A in the order of: CDEFGAB e.g. position of B will be 1, position of D will be -4
     //n = position*2
-    int nkey = note[0];
-    if (nkey < 'B'){
-        nkey = nkey-65;
-    }else if(nkey > 'B'){
-        nkey = nkey - 72;
+    int position = note[0];
+    if (position < 'B'){
+        position = position-65;
+    }else if(position > 'B'){
+        position = position - 72;
     }
-    printf("%i\n", nkey);
+    printf("position: %i\n", position);
+    printf("n: %i/n", n);
 
     //check if second character is in alphabet
 
@@ -63,14 +64,20 @@ int frequency(string note)
             //if b: n = n-1
             n = n - 1;
         }
+
+        printf("%c", note[1]);
     ///convert thrid character: oct = third character - 4
         oct = note[2] - 48;
+
+
     ///else if second character not in alphabet, oct = third charcter - 4
     }else{
         oct = note[1] - 48;
     }
     //n= n*2^oct calculate new n based on octave of the note
     n = n*2^oct;
+    printf("oct: %i\n",oct);
+    printf("n: %i/n", n);
 
     //frenquency = 2^(n/12)*440
     return frequency = 2^(n/12)*440;
