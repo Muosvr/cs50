@@ -3,6 +3,8 @@
 #include <cs50.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 #include "helpers.h"
 
@@ -16,7 +18,8 @@ int main(void){
     printf("%i\n",duration(s));
     // duration(s);
     string n = get_string("Input note: ");
-    printf("%s\n", is_rest(n) ? "true": "false");
+    printf("Empty note: %s\n", is_rest(n) ? "true": "false");
+    printf("%i\n",frequency(n));
     return 0;
 
 }
@@ -40,47 +43,68 @@ int frequency(string note)
 
     //declare int oct to count octave number away from 4
     int oct;
+    int n = 0;
 
-    //convert first character into a position index, relative to the positin to A in the order of: CDEFGAB e.g. position of B will be 1, position of D will be -4
-    //n = position*2
+    //convert first character into a position index,
+    //relative to the positin to A in the order of: CDEFGAB e.g. position of B will be 1, position of D will be -4
+
     int position = note[0];
-    if (position < 'B'){
+
+    if (position <= 66){
         position = position-65;
-    }else if(position > 'B'){
+    }else if(position > 66){
         position = position - 72;
     }
-    printf("position: %i\n", position);
-    printf("n: %i/n", n);
+
+    //n = position*2
+    n = position*2;
+
+    //Position correction: if first character is greater than B and less than F, subtract position index by 1
+    if(note[0] > 'B' && note[0] < 'F'){
+        n ++;
+        printf("Note is between C, D, or E, adjust n by 1\n");
+    }
+
+
+
+    eprintf("position: %i\n", position);
+    eprintf("n: %i\n", n);
+
 
     //check if second character is in alphabet
 
-    if (isalpha(note[1])){
+    if (strlen(note)==3){
 
         //if yes check if it is a '#'' or a 'b'
-        if (strcmp(note[1],"#") == 0){
+        if (note[1] == '#'){
             //if # n = n+1
             n = n + 1;
-        }else if(strcmp(note[1],"b") == 0){
+        }else if(note[1]=='b'){
             //if b: n = n-1
             n = n - 1;
         }
 
-        printf("%c", note[1]);
-    ///convert thrid character: oct = third character - 4
-        oct = note[2] - 48;
+        eprintf("# or b: %c\n", note[1]);
+
+        //convert thrid character: oct = third character - 4
+            oct = note[2] - 48;
 
 
     ///else if second character not in alphabet, oct = third charcter - 4
     }else{
         oct = note[1] - 48;
     }
-    //n= n*2^oct calculate new n based on octave of the note
-    n = n*2^oct;
-    printf("oct: %i\n",oct);
-    printf("n: %i/n", n);
 
-    //frenquency = 2^(n/12)*440
-    return frequency = 2^(n/12)*440;
+    //recalculate oct relative to octave of A4
+    oct = oct-4;
+
+    // calculate new n based on octave of the note
+    n = n+oct*12;
+    eprintf("oct: %i\n",oct);
+    eprintf("n: %i\n", n);
+
+    //frenquency is 2^(n/12)*440
+    return pow(2,(n/(float)12))*440;
 }
 
 // Determines whether a string represents a rest
