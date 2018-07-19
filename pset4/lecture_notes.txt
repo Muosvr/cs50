@@ -81,3 +81,46 @@ Tells you whether you've read to the end of a file
 ferror()
 Indicates whether an error has occurred in working with a file
 
+Pointers
+provides an alternative way to pass data between functions rather than copying it
+Pointers are just addresses
+Definition: A pointer is a data item whose
+- value is a memory address
+- type describes the data located at that memory address
+e.g.
+int k;
+k = 5;
+int* pk;
+pk = &k;
++
+Review: data type sizes in bytes
+int: 4
+char: 1
+float: 4
+double: 8
+long long: 8
+string: actually char*: 4 or 8
++
+Null pointer
+- the simplest pointer
+- when create a pointer without setting value, should always set value of pointer to NULL so if it doesn't get used will return segmentation fault instead of possibly some random value
+- can be checked using equality operator (==)
++
+&
+extract the address of an already existing variable
+if x is an int-type, then &x is a pointer-to-int whose value is the address of x.
+similarly if arr is an array of doubles, then &arr[i] is a pointer-to-double whose value is the address of the ith element of arr.
++
+*
+dereferencing
+If we have a pointer-to-char called pc, *pc is the data that lives at the memory address stored inside the variable pc
++
+e.g.
+int* p;
+//value of p is an address
+//we can dereference p with the * operator
+//if we do, what we'll find at that location is an int
++
+e.g. 2
+//To create multiple pointers on the same line:
+int* pa, *pb, *pc;
