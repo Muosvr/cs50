@@ -1,0 +1,55 @@
+stack frames/functions frames
+only the top frame in the stack is the active frame
+once the function in the active frame finishes, it pops off, so the next frame in the stack becomes active
+
+File Pointers
++
+fopen()
+Opens a file and returns a file pointer to it
+Always check the return value to make sure you don't get back NULL
+FILE* ptr1 = fopen("file1.txt", "r") //"r" for reading, "w" for write, "a" for appending
++
+fclose(<file pointer>);
+Closes the file
+e.g.
+fclose(ptr1);
++
+fgetc()
+Reads and returns the next character from the file pointed to
+Note: file pointer passed in must be in "r"
+e.g.
+char ch = fgetc(ptr1);
+e.g.2
+//this is what cat.c does
+char ch;
+while((ch = fgetc(ptr)) ! = EOF)
+      printf("%c", ch);
++
+fputc()
+Writes a single character to the file
+file needs to be in "w" status
+e.g.
+fput('A',ptr2);
+e.g.2
+//duplicate Linux cp command:
+char ch
+while(( ch = fgetc(ptr)) ! = EOF)
+       fputc(ch, ptr2);
++
+fread()
+fread(<buffer>, <size>, <qty>, <file pointer>);
+Reads<qty> unites of size <size> from the file pointed to the stores them in memory in a buffer (usually an array) pointed to by <buffer>
+Note: file pointer must be in "r" for read
+e.g.
+int arr[10]; //declare array of ten integers
+fread(arr, sizeof(int), 10, ptr); // read size of int
+e.g.2
+//Use dynamically allocated memory(saving on the heap)
+double* arr2 = malloc(sizeof(double)*80);
+fread(arr2, sizeof(double), 80, ptr); //note the name of an array is a pointer to its first element
+e.g.3
+//store in individual character
+char c;
+fread(&c, sizeof(char), 1, ptr); //need to use &c because first parameter needs to be a pointer
++
+fwrite
