@@ -52,4 +52,32 @@ e.g.3
 char c;
 fread(&c, sizeof(char), 1, ptr); //need to use &c because first parameter needs to be a pointer
 +
-fwrite
+fwrite()
+usage: fwrite(<buffer>, <size> , <qty>, <file pointer>);
+writes<qty> units of size<size> to the file pointed to by reading them from a buffer (usually an array) pointed to by < buffer>
+e.g.
+int arr[10] //already have info stored
+fwrite(arr, sizeof(int), 10, ptr) //taking info stored in arr and putting into the file pointed to by ptr // buffer > file
+//also works with heap and one single character as fread() above
++
+fgets()
+Reads a full string from a file
++
+fputs()
+Writes a full string to a file
++
+fprintf()
+Writes a formatted string to a file
++
+fseek()
+Allows you rewind or fast-forward within a file
++
+ftell()
+Tells you at what (byte) position you are at within a file
++
+feof()
+Tells you whether you've read to the end of a file
++
+ferror()
+Indicates whether an error has occurred in working with a file
+
