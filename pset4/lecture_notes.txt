@@ -124,3 +124,36 @@ int* p;
 e.g. 2
 //To create multiple pointers on the same line:
 int* pa, *pb, *pc;
+
+Dynamic Memory Allocation
+heap vs stack
+heap is from the top down and stack is from the bottom up in the same space of memory
++
+malloc()
+return a pointer to that memory
+If malloc() can't give memory, it will hand back NULL
+e.g.
+int x;
+int *px = malloc(sizeof(int));
+e.g. 2
+int x = GetInt();
+float stack_array[x];
+//array of floats on the heap
+float* heap_array = malloc(x * sizeof(float));
++
+memory leaks
+when memory doesn't get returned to the system after being used
++
+free()
+Dynamic Memory Allocation
+e.g.
+char * word = malloc(50 * sizeof(char));
+free(word);
+Three golden rules:
+1. Every block of memory that you mallock() most subsequently be free(()d
+2. Only memory that you malloc() should be free()d
+3. Don't free() a block of memory more than once
+
+Hexadecimal
+use 0x to prefix hexadecimal numbers to distinguish from Binary numbers
+0123456789ABCDEF
