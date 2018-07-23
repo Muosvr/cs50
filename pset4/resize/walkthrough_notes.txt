@@ -1,0 +1,66 @@
+biSizeImage
+total size of image (in bytes)
+- includes pixels and padding
+bi.biSizeImage = ((sizeof (RGBTRIPLE) * bi.biWidth) + padding) * abs(bi.biHeight);
+
+bfSize
+total size of file (in bytes)
+include pixels, padding, and headers
+bf.bfSize = bi.biSizeImage + sizeof ( BITMAPFILENEADER) + sizeof (BITMAPINFOHEADER);
+
+padding = (4 - (bi.biWidth * sizeof(RGBTRIPLE) % 4) %4
+
+writing padding
+fput(chr, outptr);
+chr: char to write
+outptr: FILE *to write to
+
+pseudocode: resizing horizontally
+for each row
+  for each pixel in row
+    write to outfile in n times
+ write outfile's padding
+  skip over infile's padding
+
+Todo
+open file
+update outfile's header info
+read infile's scanline, pixel by pixel
+resize horizontally
+remember padding
+resize vertically
+
+resize vertically
+multiple ways to do this!
+1. "rewrite" methods
+- remember pixels in an array
+- write array as many times as needed
+2. "re-copy" methods
+- go back to the start of the original scanline
+- re-scale scanline
+
+file position indicator
+fseek(inptr, offset, from);
+- inptr: FILE * to seek in
+- offset: number of byptes to move cursor
+- from:
+- - SEEK_CUR (current position in file)
+- - SEEK_SET (beginning of file)
+- - SEEK_END (end of file)
+
+pseudocode: "rewrite" method
+for each row
+    for each pixel
+        write to array n times
+    for n times
+        write array to outfile
+        write outfile padding
+     skip over infile padding
+
+pseudocode: "recopy" method
+for each row
+      for n-1 times
+             write pixels, padding to outfile
+             send infile cursor back
+      write pixels, padding to outfile
+      skip over infile padding
