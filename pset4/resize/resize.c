@@ -72,14 +72,18 @@ int main(int argc, char *argv[])
     // determine padding for scanlines
     int padding = (4 - (bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
 
+
     //set new width of output image
     bio.biWidth = bi.biWidth*n;
 
     //Vertical: set new height of output image
     bio.biHeight = bi.biHeight*n;
 
+    //calculate out file padding
+    int outPadding = (4 - (bio.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
+
     //calculate outfile's BITMAPFILEHEADER biSizeImage
-    bio.biSizeImage = ((sizeof(RGBTRIPLE)*bio.biWidth)+padding)*abs(bio.biHeight); //multiply this by n for vertical
+    bio.biSizeImage = ((sizeof(RGBTRIPLE)*bio.biWidth)+outPadding)*abs(bio.biHeight); //multiply this by n for vertical
 
     //Update outfile's BITMAPINFOHEADER
     bfo.bfSize = bio.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
@@ -122,9 +126,6 @@ int main(int argc, char *argv[])
             }
 
         }
-
-        //calculate out file padding
-        int outPadding = (4 - (bio.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
 
         //Vertical: loop over n times to write type RGBTRIPLE array to file, and add padding each time
         for (int l = 0; l < n; l++)
