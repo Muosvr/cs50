@@ -76,12 +76,13 @@ int main(int argc, char *argv[])
     bio.biWidth = bi.biWidth*n;
 
     //Vertical: set new height of output image
+    bio.biHeight = bi.biHeight*n;
 
     //calculate outfile's BITMAPFILEHEADER biSizeImage
-    bio.biSizeImage = ((sizeof(RGBTRIPLE)*bi.biWidth)+padding)*abs(bi.biHeight); //multiply this by n for vertical
+    bio.biSizeImage = ((sizeof(RGBTRIPLE)*bio.biWidth)+padding)*abs(bio.biHeight); //multiply this by n for vertical
 
     //Update outfile's BITMAPINFOHEADER
-    bfo.bfSize = bi.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    bfo.bfSize = bio.biSizeImage + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 
     //Write outfile's BITMAPFILEHEADER
     //modify to replace with new BITMAPFILEHEADER size x
@@ -96,6 +97,10 @@ int main(int argc, char *argv[])
     for (int i = 0, biHeight = abs(bi.biHeight); i < biHeight; i++)
     {
         //Vertical: declare array type RGBTRIPLE
+        RGBTRIPLE tripleRow[bio.biWidth];
+
+        //Vertical: declare index variable for the next unassigned value in the tripleRow array
+        int index = 0;
 
         // iterate over pixels in scanline
         for (int j = 0; j < bi.biWidth; j++)
@@ -111,24 +116,31 @@ int main(int argc, char *argv[])
             //loop this n times to scale horizontally
             //Verical: modify this to save to the type RGBTRIPLE array
             for (int k = 0; k<n; k++){
-                fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
+                // fwrite(&triple, sizeof(RGBTRIPLE), 1, outptr);
+                tripleRow[index] = triple;
+                index++;
             }
 
         }
 
-        //Vertical: loop over n times to write type RGBTRIPLE array to file, and add padding each time
-
-        // skip over padding, if any
-        fseek(inptr, padding, SEEK_CUR);
-
         //calculate out file padding
         int outPadding = (4 - (bio.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
 
-        // add new padding to outfile
-        for (int k = 0; k < outPadding; k++)
+        //Vertical: loop over n times to write type RGBTRIPLE array to file, and add padding each time
+        for (int l = 0; l < n; l++)
         {
-            fputc(0x00, outptr);
+            //write each row to file from array
+            fwrite(tripleRow, sizeof(RGBTRIPLE), bio.biWidth, outptr);
+
+            // add new padding to outfile
+            for (int k = 0; k < outPadding; k++)
+            {
+                fputc(0x00, outptr);
+            }
         }
+
+        // skip over padding, if any
+        fseek(inptr, padding, SEEK_CUR);
 
     }
 
