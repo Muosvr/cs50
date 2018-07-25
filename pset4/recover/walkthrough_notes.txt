@@ -1,0 +1,41 @@
+Todo
+-open memory card file (fopen)
+- finding beginning of JPEG
+- open a new JPEG
+- write 512 byte until new JPEG is found
+- detect end of file
+
+fread(data, size, number, inptr)
+
+identifying beginning of JPEG
+if (buffer[0] == 0xff &&
+buffer[1] == 0xd8 &&
+buffer[2] == 0xff &&
+(buffer[3] & 0xf0) == 0xe0) //this line of code use a bitwise AND operator to manipulate the bits into appropriate format for comparing
+
+making a new JPEG
+filenames: ###.jpg
+named in the order in which they are found, starting at 000.
++
+sprintf(filename, "%03i.jpg", 2); //filename: char array to store the resultant string 002.jpg
+FILE *img = fopen(filename, "w")
++
+writing files
+fwrite(data, size, number, outptr)
+
+End of File EOF
+fread(data, size, number, inptr);
+- returns how many items of size <size> were read (ideally, it returns number)
+- use it directly in a condition
+
+pseudocode
+open card file
+repeat until end of card
+    read 512 bytes into a buffer
+    start of a new JPEG?
+        yes ->
+        no ->
+    already found a JPEG?
+        no ->
+        yes ->
+close any remaining files
