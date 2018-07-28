@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 
     // open output file
     FILE *outptr = fopen(outfile, "w");
+
     if (outptr == NULL)
     {
         fclose(inptr);
