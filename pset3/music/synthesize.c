@@ -15,7 +15,7 @@ int main(int argc, string argv[])
         fprintf(stderr, "Usage: synthesize FILE\n");
         return 1;
     }
-    string filename = argv[1];
+    string filename = argv[2];
 
     // Open file for writing
     song s = song_open(filename);
