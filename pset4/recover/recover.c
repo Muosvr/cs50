@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
     int a=0, b=0, c=0;
     char outputNameBuffer[3];
 
-    //test
+    //create an output file
     sprintf(outputNameBuffer,"%d%d%d.jpg",c,b,a);
     FILE *output_file = fopen(outputNameBuffer, "w");
 
@@ -58,13 +58,13 @@ int main(int argc, char *argv[]){
             if(foundJPEG == 1){
                 fclose(output_file);
 
-                //specify naming convention
+                //specify outputfile naming convention
                 a = jpegCounter%10;
                 b = jpegCounter%100/10;
                 c = jpegCounter%1000/100;
                 sprintf(outputNameBuffer,"%d%d%d.jpg",c,b,a);
 
-                //create file under new name
+                //create file under new name after ever new jpeg found
                 output_file = fopen(outputNameBuffer, "w");
             }
 
