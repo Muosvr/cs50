@@ -93,6 +93,56 @@ node *root;
 
 load
 for every dictionary word, iterate through the trie
-12:44
+each element in children corresponds to a different letter
+check the value at children[i]
+if NULL, malloc a new node, have children[i] point to it
+if not NULL, move to new node and continue
+if at end of word, set is_word to true
+
+e.g.
+“fox”
+f: root -> children[5]
+o: root -> children[5] -> children[14]
+x: root -> children[5] -> children[14]->children[23]
+
+speller / check
+case-insensitive
+assume strings with only alphabetical characters and/or apostrophes
+
+traversing linked lists
+node *cursor = head;
+while (cursor != NULL)
+{
+	cursor = cursor->next;
+}
+
+traversing a trie
+for each letter in input word
+	go to corresponding element in children
+		if NULL, word is misspelled
+		if not NULL, move to next letter
+	once at end of input word
+		check if is_word is true
+
+unloading/freeing linked lists
+node *cursor = head;
+
+while (cursor != NULL)
+{
+	node *temp = cursor;
+	cursor = cursor -> next;
+	free(temp);
+}
+
+unload tries
+unload from bottom to top
+travel to lowest possible node
+	free all pointers in children
+	backtrack upwards, freeing all elements in each children array until you hit root node
+recursion!
+
+valgrind
+-check memory leak
+valgrind -v --leak-check=full austinpowers.txt
 
 
