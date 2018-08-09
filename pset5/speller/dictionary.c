@@ -23,13 +23,18 @@ bool load(const char *dictionary)
 {
     // TODO
     //open dictionary file
-    //melloc memory for hash table array
+    //malloc memory for hash table array
     //loop through each word in the file till end of file ??
     //read each word into memory
         //word to lowercase ?
         //use hash function to calculate index for word
+        //malloc memory for new node
+        //check if malloc succeeded
         //check hash table array if index exist
-            //if yes, find head of linked list
+            //if yes, add node to the linked list
+            //if no, add to the hash table start a new linked list ??
+    //make sure no memory leak from malloc ??
+    //return true if the above succeeds;
 
 
     return false;
@@ -39,6 +44,8 @@ bool load(const char *dictionary)
 unsigned int size(void)
 {
     // TODO
+    //open dictionary file, file name ??
+    //loop through and count each word until end of file
     return 0;
 }
 
@@ -46,5 +53,9 @@ unsigned int size(void)
 bool unload(void)
 {
     // TODO
+    //loop through hash table array
+        //loop through from end of linked list to the head
+            //free each node from memory
+
     return false;
 }
