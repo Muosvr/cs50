@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define HASHTABLE 100
+#define HASHTABLE 10000
 #define MAXSTR 46
 
 // djb2 hash function from http://www.cse.yorku.ca/~oz/hash.html
@@ -14,7 +14,7 @@ int main(void)
     // char word[20];
     // word[0] = argv[1];
     char word[MAXSTR];
-    // char word[]={'a','p','p','l','e'};
+
     printf("Word to hash- ");
     scanf("%s45", word);
 
