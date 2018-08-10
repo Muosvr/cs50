@@ -32,7 +32,7 @@ bool load(const char *dictionary)
         //check hash table array if index exist
             //if yes, add node to the linked list
             //if no, add to the hash table start a new linked list ??
-    //return true if the above succeeds;
+    //return true if the above succeeds
 
 
     return false;
