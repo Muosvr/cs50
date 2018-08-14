@@ -9,6 +9,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define HASHTABLESIZE 10000
+
 //for testing
 #include <stdio.h>
 
@@ -18,6 +20,9 @@ typedef struct node
     struct node *next;
 }
 node;
+
+//declare variable
+ node *hashtable[HASHTABLESIZE] = {NULL};
 
 
 
@@ -36,6 +41,9 @@ bool check(const char *word)
     }
     printf("Tolower: %s\n", copy);
 
+    //traverse hash table
+    // int index = hash_func(copy);
+    // node* curosr =
 
     // use hash function to calculate index for word
     // look up word index from hash table array
@@ -47,67 +55,62 @@ bool check(const char *word)
     return false;
 }
 
+unsigned long hash_func (char* word)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while ((c = *word++))
+    {
+        // printf("int c = %i\n", c); // only to visualize function
+
+        hash = ((hash << 5) + hash) + tolower(c);
+        // printf("hash = %lu\n\n", hash); // only to visualize function
+    }
+
+    return hash % HASHTABLESIZE;
+}
+
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
     // TODO
     // create a mock hash table for testing
 
-        node *hashtable[10];
-
         FILE *dictionaryFile = fopen(dictionary,"r");
 
-
-        hashtable[0] = NULL; //head
+        //check if file exist
+        if(dictionaryFile == NULL)
+        {
+            printf("Dictionary does not exist\n");
+            return false;
+        }
+        // hashtable[0] = NULL; //head
+        // free(head);
 
         char word[46];
-
+        // printf("Input 5 wrods: ");
         while (fscanf(dictionaryFile,"%s",word)!=EOF){
 
             // scanf("%s45", word);
+            int index = hash_func(word);
+            printf("Word: %s, Hash #: %d\n", word, index);
+
             node *newNode = malloc(sizeof(node));
             strcpy(newNode -> word, word);
-            newNode->next = hashtable[0];
-            hashtable[0] = newNode;
+            newNode->next = hashtable[index];
+            hashtable[index] = newNode;
         }
-
-        // printf("In hash table: %s\n", hashtable[0]->word);
-        // node *newNode = malloc(sizeof(node));
-        // strcpy(newNode -> word, "World");
-        // newNode->next = head;
-        // head = newNode;
-        // free(newNode);
-
-
-        // node *node2 = malloc(sizeof(node));
-        // node *node3 = malloc(sizeof(node));
-
-        // strcpy(node2 -> word, "World");
-        // strcpy(node3 -> word, "Sky");
-        // node1 -> next = node2;
-        // node2 -> next = node3;
-        // // node2 -> next = NULL;
-        // hashtable[0] = node1;
-
-        // //mock hash table index 1
-        // node *node4 = malloc(sizeof(node));
-        // node *node5 = malloc(sizeof(node));
-        // strcpy(node4->word, "Chair");
-        // strcpy(node5->word, "Window");
-        // node4 -> next = node5;
-        // hashtable[1] = node4;
-
-
 
         // char *target = node1 -> word;
 
-        node *cursor = hashtable[0];
+        // node *cursor = hashtable[2488];
 
-        while(cursor != NULL){
-            printf("Cursor: %s\n", cursor->word);
-            cursor = cursor->next;
+        // while(cursor != NULL){
+            // printf("Cursor: %s\n", cursor->word);
+        //     cursor = cursor->next;
 
-        }
+        // }
         // char *target = hashtable[0]->next->word;
         // printf("Target: %s\n", target);
         // printf("Cursor: %s\n", cursor->word);
@@ -126,7 +129,7 @@ bool load(const char *dictionary)
     //return true if the above succeeds
     printf("Dictionary: %s\n", dictionary);
 
-    return false;
+    return true;
 }
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
@@ -154,11 +157,13 @@ bool unload(void)
 int main(void){
     char word[46];
     char dictionary[46];
+
     printf("Word: ");
     scanf("%s45", word);
     printf("Dictionary: ");
     scanf("%s45", dictionary);
     printf("You typed: %s\n", word);
+
     check(word);
     load(dictionary);
 }

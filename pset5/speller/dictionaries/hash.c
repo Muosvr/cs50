@@ -13,7 +13,7 @@ int main(void)
 
     // char word[20];
     // word[0] = argv[1];
-    char word[MAXSTR];
+    char word[46];
 
     printf("Word to hash- ");
     scanf("%s45", word);
