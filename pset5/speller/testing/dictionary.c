@@ -42,7 +42,8 @@ bool check(const char *word)
     //if index found
         // look up word following linked list in hash table
         //use strcmp to check each word in linked list, return true if strcmp result in 0
-//     return 0;
+//return 0;
+
     return false;
 }
 
@@ -54,24 +55,23 @@ bool load(const char *dictionary)
 
         node *hashtable[10];
 
-        //mock hash table index 0
-        node *head = malloc(sizeof(node));
-        strcpy(head -> word, "Hello");
-        hashtable[0] = head; //head
-        free(head);
+        FILE *dictionaryFile = fopen(dictionary,"r");
 
-        printf("Input 10 wrods: ");
-        for (int i=0;i<10;i++){
-            char word[46];
-            scanf("%s45", word);
+
+        hashtable[0] = NULL; //head
+
+        char word[46];
+
+        while (fscanf(dictionaryFile,"%s",word)!=EOF){
+
+            // scanf("%s45", word);
             node *newNode = malloc(sizeof(node));
-            // newNode->word = word;
             strcpy(newNode -> word, word);
             newNode->next = hashtable[0];
             hashtable[0] = newNode;
         }
 
-        printf("In hash table: %s\n", hashtable[0]->word);
+        // printf("In hash table: %s\n", hashtable[0]->word);
         // node *newNode = malloc(sizeof(node));
         // strcpy(newNode -> word, "World");
         // newNode->next = head;
@@ -101,13 +101,13 @@ bool load(const char *dictionary)
 
         // char *target = node1 -> word;
 
-        // node *cursor = hashtable[0];
+        node *cursor = hashtable[0];
 
-        // while(cursor != NULL){
-        //     printf("Cursor: %s\n", cursor->word);
-        //     cursor = cursor->next;
+        while(cursor != NULL){
+            printf("Cursor: %s\n", cursor->word);
+            cursor = cursor->next;
 
-        // }
+        }
         // char *target = hashtable[0]->next->word;
         // printf("Target: %s\n", target);
         // printf("Cursor: %s\n", cursor->word);
