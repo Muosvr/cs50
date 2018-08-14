@@ -54,14 +54,63 @@ bool load(const char *dictionary)
 
         node *hashtable[10];
 
-        node *node1 = malloc(sizeof(node));
-        node *node2 = malloc(sizeof(node));
-        strcpy(node1 -> word, "Hello");
-        strcpy(node2 -> word, "World");
-        node1 -> next = node2;
-        hashtable[0] = node1;
+        //mock hash table index 0
+        node *head = malloc(sizeof(node));
+        strcpy(head -> word, "Hello");
+        hashtable[0] = head; //head
+        free(head);
 
-        printf("Node1: %s\n", node1->word);
+        printf("Input 10 wrods: ");
+        for (int i=0;i<10;i++){
+            char word[46];
+            scanf("%s45", word);
+            node *newNode = malloc(sizeof(node));
+            // newNode->word = word;
+            strcpy(newNode -> word, word);
+            newNode->next = hashtable[0];
+            hashtable[0] = newNode;
+        }
+
+        printf("In hash table: %s\n", hashtable[0]->word);
+        // node *newNode = malloc(sizeof(node));
+        // strcpy(newNode -> word, "World");
+        // newNode->next = head;
+        // head = newNode;
+        // free(newNode);
+
+
+        // node *node2 = malloc(sizeof(node));
+        // node *node3 = malloc(sizeof(node));
+
+        // strcpy(node2 -> word, "World");
+        // strcpy(node3 -> word, "Sky");
+        // node1 -> next = node2;
+        // node2 -> next = node3;
+        // // node2 -> next = NULL;
+        // hashtable[0] = node1;
+
+        // //mock hash table index 1
+        // node *node4 = malloc(sizeof(node));
+        // node *node5 = malloc(sizeof(node));
+        // strcpy(node4->word, "Chair");
+        // strcpy(node5->word, "Window");
+        // node4 -> next = node5;
+        // hashtable[1] = node4;
+
+
+
+        // char *target = node1 -> word;
+
+        // node *cursor = hashtable[0];
+
+        // while(cursor != NULL){
+        //     printf("Cursor: %s\n", cursor->word);
+        //     cursor = cursor->next;
+
+        // }
+        // char *target = hashtable[0]->next->word;
+        // printf("Target: %s\n", target);
+        // printf("Cursor: %s\n", cursor->word);
         // return hashtable;
 
     //open dictionary file
