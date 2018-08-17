@@ -158,18 +158,18 @@ bool unload(void)
     return true;
 }
 
-int main(void){
-    char word[46];
-    char dictionary[46];
+// int main(void){
+//     char word[46];
+//     char dictionary[46];
 
-    printf("Word: ");
-    scanf("%s45", word);
-    printf("Dictionary: ");
-    scanf("%s45", dictionary);
-    printf("You typed: %s\n", word);
+//     printf("Word: ");
+//     scanf("%s45", word);
+//     printf("Dictionary: ");
+//     scanf("%s45", dictionary);
+//     printf("You typed: %s\n", word);
 
-    load(dictionary);
-    check(word);
-    unload();
-    printf("Word Count: %d\n", size());
-}
+//     load(dictionary);
+//     check(word);
+//     unload();
+//     printf("Word Count: %d\n", size());
+// }
