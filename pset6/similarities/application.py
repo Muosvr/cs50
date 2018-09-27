@@ -4,7 +4,7 @@ from flask import Flask, abort, redirect, render_template, request
 from html import escape
 from werkzeug.exceptions import default_exceptions, HTTPException
 
-from helpers import distances, Operation
+from helpers import lines, sentences, substrings
 
 # Web app
 app = Flask(__name__)
@@ -25,67 +25,106 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/score", methods=["POST"])
-def score():
-    """Handle requests for /score via POST"""
+@app.route("/compare", methods=["POST"])
+def compare():
+    """Handle requests for /compare via POST"""
 
     # Read files
-    s1 = request.form.get("string1")
-    s2 = request.form.get("string2")
-    if not s1 or not s2:
-        abort(400, "missing strings")
+    if not request.files["file1"] or not request.files["file2"]:
+        abort(400, "missing file")
+    try:
+        file1 = request.files["file1"].read().decode("utf-8")
+        file2 = request.files["file2"].read().decode("utf-8")
+    except Exception:
+        abort(400, "invalid file")
 
-    # Score files
-    matrix = distances(s1, s2)
+    # Compare files
+    if not request.form.get("algorithm"):
+        abort(400, "missing algorithm")
+    elif request.form.get("algorithm") == "lines":
+        regexes = [f"^{re.escape(match)}$" for match in lines(file1, file2)]
+    elif request.form.get("algorithm") == "sentences":
+        regexes = [re.escape(match) for match in sentences(file1, file2)]
+    elif request.form.get("algorithm") == "substrings":
+        if not request.form.get("length"):
+            abort(400, "missing length")
+        elif not int(request.form.get("length")) > 0:
+            abort(400, "invalid length")
+        regexes = [re.escape(match) for match in substrings(
+            file1, file2, int(request.form.get("length")))]
+    else:
+        abort(400, "invalid algorithm")
 
-    # Extract operations from table
-    operations = []
-    i, j = len(s1), len(s2)
-    while True:
-        _, operation = matrix[i][j]
-        if not operation:
-            break
-        if operation == Operation.INSERTED:
-            j -= 1
-        elif operation == Operation.DELETED:
-            i -= 1
-        else:
-            i -= 1
-            j -= 1
-        operations.append(operation)
-    operations.reverse()
-
-    # Maintain list of intermediate strings, operation, and descriptions
-    transitions = [(s1, None, None)]
-    i = 0
-
-    # Apply each operation
-    prev = s1
-    for operation in operations:
-
-        # Update string and description of operation
-        if operation == Operation.INSERTED:
-            s = (prev[:i], s2[i], prev[i:])
-            description = f"inserted '{s2[i]}'"
-            prev = prev[:i] + s2[i] + prev[i:]
-            i += 1
-        elif operation == Operation.DELETED:
-            s = (prev[:i], prev[i], prev[i + 1:])
-            description = f"deleted '{prev[i]}'"
-            prev = prev[:i] + prev[i + 1:]
-        elif prev[i] != s2[i]:
-            s = (prev[:i], s2[i], prev[i + 1:])
-            description = f"substituted '{prev[i]}' with '{s2[i]}'"
-            prev = prev[:i] + s2[i] + prev[i + 1:]
-            i += 1
-        else:
-            i += 1
-            continue
-        transitions.append((s, str(operation), description))
-    transitions.append((s2, None, None))
+    # Highlight files
+    highlights1 = highlight(file1, regexes)
+    highlights2 = highlight(file2, regexes)
 
     # Output comparison
-    return render_template("score.html", matrix=matrix, s1=s1, s2=s2, operations=transitions)
+    return render_template("compare.html", file1=highlights1, file2=highlights2)
+
+
+def highlight(s, regexes):
+    """Highlight all instances of regexes in s."""
+
+    # Get intervals for which strings match
+    intervals = []
+    for regex in regexes:
+        if not regex:
+            continue
+        matches = re.finditer(regex, s, re.MULTILINE)
+        for match in matches:
+            intervals.append((match.start(), match.end()))
+    intervals.sort(key=lambda x: x[0])
+
+    # Combine intervals to get highlighted areas
+    highlights = []
+    for interval in intervals:
+        if not highlights:
+            highlights.append(interval)
+            continue
+        last = highlights[-1]
+
+        # If intervals overlap, then merge them
+        if interval[0] <= last[1]:
+            new_interval = (last[0], interval[1])
+            highlights[-1] = new_interval
+
+        # Else, start a new highlight
+        else:
+            highlights.append(interval)
+
+    # Maintain list of regions: each is a start index, end index, highlight
+    regions = []
+
+    # If no highlights at all, then keep nothing highlighted
+    if not highlights:
+        regions = [(0, len(s), False)]
+
+    # If first region is not highlighted, designate it as such
+    elif highlights[0][0] != 0:
+        regions = [(0, highlights[0][0], False)]
+
+    # Loop through all highlights and add regions
+    for start, end in highlights:
+        if start != 0:
+            prev_end = regions[-1][1]
+            if start != prev_end:
+                regions.append((prev_end, start, False))
+        regions.append((start, end, True))
+
+    # Add final unhighlighted region if necessary
+    if regions[-1][1] != len(s):
+        regions.append((regions[-1][1], len(s), False))
+
+    # Combine regions into final result
+    result = ""
+    for start, end, highlighted in regions:
+        escaped = escape(s[start:end])
+        if highlighted:
+            result += f"<span>{escaped}</span>"
+        else:
+            result += escaped
+    return result
 
 
 @app.errorhandler(HTTPException)

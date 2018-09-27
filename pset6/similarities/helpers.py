@@ -1,19 +1,19 @@
-from enum import Enum
-
-
-class Operation(Enum):
-    """Operations"""
-
-    DELETED = 1
-    INSERTED = 2
-    SUBSTITUTED = 3
-
-    def __str__(self):
-        return str(self.name.lower())
-
-
-def distances(a, b):
-    """Calculate edit distance from a to b"""
+def lines(a, b):
+    """Return lines in both a and b"""
 
     # TODO
-    return [[]]
+    return []
+
+
+def sentences(a, b):
+    """Return sentences in both a and b"""
+
+    # TODO
+    return []
+
+
+def substrings(a, b, n):
+    """Return substrings of length n in both a and b"""
+
+    # TODO
+    return []
