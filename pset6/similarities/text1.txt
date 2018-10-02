@@ -1,0 +1,3 @@
+To test your implementation of lines, sentences.
+and/or substrings via the command line, execute compare as follows.
+where FILE1 and FILE2 are any two text files.
