@@ -6,12 +6,14 @@
         <form action="/compare" enctype="multipart/form-data" method="post">
 
             <!-- TODO -->
-            Select a file: <input type="file" name="myFile">
-            Select a file: <input type="file" name="myFile"><br>
+            Text1: <input type="file" name="file1">
+            Text2: <input type="file" name="file2"><br>
 
-            <input type="radio" name="gender" value="male" checked> Line<br>
-            <input type="radio" name="gender" value="female"> Sentence<br>
-            <input type="radio" name="gender" value="other"> Substring
+            <input type="radio" name="algorithm" value="lines" checked> Line
+            <input type="radio" name="algorithm" value="sentences"> Sentence
+            <input type="radio" name="algorithm" value="substrings"> Substring
+            <input type="number" name="length"><br>
+            <input type="submit" value="Submit">
         </form>
     </div>
 
