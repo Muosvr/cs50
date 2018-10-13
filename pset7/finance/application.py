@@ -35,13 +35,11 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
-
 @app.route("/")
 @login_required
 def index():
     """Show portfolio of stocks"""
     return apology("TODO")
-
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -55,7 +53,6 @@ def buy():
 def history():
     """Show history of transactions"""
     return apology("TODO")
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -115,6 +112,26 @@ def quote():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
+    session.clear()
+
+    if request.method == "POST":
+
+        #check if username is blank
+        if not request.form.get("username"):
+            return apology("Please provide user name")
+
+        #check if password is blank
+        if not request.form.get("password"):
+            return apology("Please provide password")
+
+        #enter password again to confirm
+
+        #check if user name already exist
+
+        #submit input via post to /register
+
+        #inser new user into database
+
     return apology("TODO")
 
 
