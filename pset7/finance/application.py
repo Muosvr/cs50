@@ -118,21 +118,26 @@ def register():
 
         #check if username is blank
         if not request.form.get("username"):
-            return apology("Please provide user name")
+            return apology("Please provide user name", 403)
 
         #check if password is blank
         if not request.form.get("password"):
-            return apology("Please provide password")
+            return apology("Please provide password", 403)
 
         #enter password again to confirm
+        if not request.form.get("password") == request.form.get("confirmation"):
+            return apology("Password does not match", 403)
 
         #check if user name already exist
+        if db.execute("SELECT username from users WHERE username = :username",
+                                        username=request.form.get("username")):
+            return apology("username already exist", 403)
 
         #submit input via post to /register
 
         #inser new user into database
-
-    return apology("TODO")
+    else:
+        return render_template("register.html")
 
 
 @app.route("/sell", methods=["GET", "POST"])
