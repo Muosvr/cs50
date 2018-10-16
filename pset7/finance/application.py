@@ -131,11 +131,17 @@ def register():
         #check if user name already exist
         if db.execute("SELECT username from users WHERE username = :username",
                                         username=request.form.get("username")):
-            return apology("username already exist", 403)
+            return apology("Username already exist", 403)
 
-        #submit input via post to /register
+        #generate password hash and get username
+        hash = generate_password_hash(request.form.get("password"))
+        username = request.form.get("username")
+
 
         #inser new user into database
+        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
+                    username=username, hash = hash)
+        return redirect("/")
     else:
         return render_template("register.html")
 
