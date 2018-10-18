@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+    <form action = "/quote" method="post">
+        <div class="form-group">
+            <input class="form-control" name="symbol" placeholder="symbol" type="text"/>
+            <button class="btn btn-primary" type="submit">Quote</button>
+        </div>
+    </form>
+    <div>{{message}}</div>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Symbol</th>
+        </tr>
+        <tr>
+            <td>{{name}}</td>
+            <td>{{price}}</td>
+            <td>{{symbol}}</td>
+        </tr>
+    </table>
+{% endblock %}

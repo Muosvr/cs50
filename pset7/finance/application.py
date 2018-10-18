@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session
@@ -45,7 +46,29 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    username = session.get("username")
+    # print(f'username: {username}')
+
+    if request.method=="POST":
+        symbol = request.form.get("symbol")
+        quantity = request.form.get("quantity")
+        price = 0
+        message = ""
+        time = datetime.datetime.now()
+        response = lookup(symbol)
+
+        if response:
+            price = response["price"]
+            name = response["name"]
+            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity)",
+                        username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity)
+            message = f'Recorded purchase {quantity} stock(s) of {name} on {time.strftime("%c")}'
+            return render_template("buy.html", message=message)
+        else:
+            message = "Invalid symbol"
+            return render_template("buy.html", message=message)
+    else:
+        return render_template("buy.html")
 
 
 @app.route("/history")
@@ -82,6 +105,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+        session["username"] = rows[0]["username"]
 
         # Redirect user to home page
         return redirect("/")
@@ -106,7 +130,22 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+    name = ""
+    price = ""
+    symbol = ""
+    message = ""
+    if request.method == "POST":
+        response = lookup(request.form.get("symbol"))
+        if response:
+            name = response["name"]
+            price = response["price"]
+            symbol = response["symbol"]
+            return render_template("quote.html", name=name, price=price, symbol=symbol)
+        else:
+            message = "Symbol not found!"
+            return render_template("quote.html", name=name, price=price, symbol=symbol, message=message)
+    else:
+        return render_template("quote.html", name=name, price=price, symbol=symbol)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -142,6 +181,8 @@ def register():
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
                     username=username, hash = hash)
         return redirect("/")
+        #TODO add redirect to success message
+
     else:
         return render_template("register.html")
 
