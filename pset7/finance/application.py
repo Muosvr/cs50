@@ -40,6 +40,23 @@ db = SQL("sqlite:///finance.db")
 @login_required
 def index():
     """Show portfolio of stocks"""
+    stocsk = []
+
+    #Need testing
+    class Stock:
+        def __init__(self, owner, symbol):
+            self.owner = owner
+            self.symbol = symbol
+            self.name = lookup(self.symbol)["name"]
+
+        #to be tested
+        def update_quantity(self):
+            self.quantity = db.execute(
+                "SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
+                username = self.owner, symbol = self.symbol)[0]["SUM(quantity)"]
+        def update_price(self):
+            self.price = lookup(self.symbol)["price"]
+
     return apology("TODO")
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -60,10 +77,17 @@ def buy():
         if response:
             price = response["price"]
             name = response["name"]
-            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity)",
-                        username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity)
-            message = f'Recorded purchase {quantity} stock(s) of {name} on {time.strftime("%c")}'
-            return render_template("buy.html", message=message)
+            cash = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
+            cost = price * float(quantity)
+            if cash >= cost:
+                cash -= cost
+                db.execute("UPDATE users SET cash=:cash WHERE username=:username", cash=cash, username=username)
+                db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity)",
+                            username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity)
+                message = f'Recorded purchase {quantity} stock(s) of {name} at ${price}/stock'
+                return render_template("buy.html", message=message)
+            else:
+                return apology("Not enough cash")
         else:
             message = "Invalid symbol"
             return render_template("buy.html", message=message)

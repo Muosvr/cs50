@@ -5,6 +5,20 @@
 {% endblock %}
 
 {% block main %}
-
+    <table class="table">
+        <tr>
+            <th>Stock</th>
+            <th>Current Price</th>
+            <th>Quantity Holding</th>
+            <th>Total Value</th>
+        </tr>
+        {% for stock in stocks %}
+            <tr>
+                <th>{{stock.name}}</th>
+                <th>{{stock.price}}</th>
+                <th>{{stock.quantity}}</th>
+                <th>{{stock.price * stock.quantity}}</th>
+            </tr>
+    </table>
 
 {% endblock %}
