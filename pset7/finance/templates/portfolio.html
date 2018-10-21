@@ -14,11 +14,21 @@
         </tr>
         {% for stock in stocks %}
             <tr>
-                <th>{{stock.name}}</th>
-                <th>{{stock.price}}</th>
-                <th>{{stock.quantity}}</th>
-                <th>{{stock.price * stock.quantity}}</th>
+                <td>{{stock.name}}</th>
+                <td>USD {{stock.price}}</th>
+                <td>{{stock.quantity}}</th>
+                <td>USD {{stock.price * stock.quantity}}</th>
             </tr>
+        {% endfor %}
+    </table>
+
+    <table class="table">
+        <tr>
+            <th>Total account value</th>
+        </tr>
+        <tr>
+            <td>USD {{total_value}}</td>
+        </tr>
     </table>
 
 {% endblock %}

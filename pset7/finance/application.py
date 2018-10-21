@@ -40,7 +40,8 @@ db = SQL("sqlite:///finance.db")
 @login_required
 def index():
     """Show portfolio of stocks"""
-    stocsk = []
+    stocks = []
+    total_value = 0
 
     #Need testing
     class Stock:
@@ -48,6 +49,8 @@ def index():
             self.owner = owner
             self.symbol = symbol
             self.name = lookup(self.symbol)["name"]
+            self.update_price()
+            self.update_quantity()
 
         #to be tested
         def update_quantity(self):
@@ -56,8 +59,17 @@ def index():
                 username = self.owner, symbol = self.symbol)[0]["SUM(quantity)"]
         def update_price(self):
             self.price = lookup(self.symbol)["price"]
+    username = session.get("username")
+    symbol_list = db.execute("SELECT stock_symbol FROM history WHERE username=:username GROUP BY stock_symbol", username=username)
 
-    return apology("TODO")
+    for sym in symbol_list:
+        symbol = sym["stock_symbol"]
+        new_stock = Stock(username, symbol)
+        stocks.append(new_stock)
+        total_value += new_stock.quantity * new_stock.price
+
+
+    return render_template("portfolio.html", stocks = stocks, total_value=total_value)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
