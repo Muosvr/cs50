@@ -36,31 +36,31 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
+class Stock:
+    def __init__(self, owner, symbol):
+        self.owner = owner
+        self.symbol = symbol
+        self.name = lookup(self.symbol)["name"]
+        self.update_price()
+        self.update_quantity()
+
+    #to be tested
+    def update_quantity(self):
+        self.quantity = db.execute(
+            "SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
+            username = self.owner, symbol = self.symbol)[0]["SUM(quantity)"]
+    def update_price(self):
+        self.price = lookup(self.symbol)["price"]
+
 @app.route("/")
 @login_required
 def index():
     """Show portfolio of stocks"""
     stocks = []
     total_value = 0
-
-    #Need testing
-    class Stock:
-        def __init__(self, owner, symbol):
-            self.owner = owner
-            self.symbol = symbol
-            self.name = lookup(self.symbol)["name"]
-            self.update_price()
-            self.update_quantity()
-
-        #to be tested
-        def update_quantity(self):
-            self.quantity = db.execute(
-                "SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
-                username = self.owner, symbol = self.symbol)[0]["SUM(quantity)"]
-        def update_price(self):
-            self.price = lookup(self.symbol)["price"]
     username = session.get("username")
     symbol_list = db.execute("SELECT stock_symbol FROM history WHERE username=:username GROUP BY stock_symbol", username=username)
+    cash_balance = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
 
     for sym in symbol_list:
         symbol = sym["stock_symbol"]
@@ -69,7 +69,7 @@ def index():
         total_value += new_stock.quantity * new_stock.price
 
 
-    return render_template("portfolio.html", stocks = stocks, total_value=total_value)
+    return render_template("portfolio.html", stocks = stocks, cash_balance="{0:.2f}".format(cash_balance), total_value="{0:.2f}".format(total_value))
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -81,6 +81,9 @@ def buy():
     if request.method=="POST":
         symbol = request.form.get("symbol")
         quantity = request.form.get("quantity")
+        if not quantity.isdigit():
+            return apology("Quantity must be a positive integer")
+        quantity = int(quantity)
         price = 0
         message = ""
         time = datetime.datetime.now()
@@ -96,13 +99,12 @@ def buy():
                 db.execute("UPDATE users SET cash=:cash WHERE username=:username", cash=cash, username=username)
                 db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity)",
                             username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity)
-                message = f'Recorded purchase {quantity} stock(s) of {name} at ${price}/stock'
+                message = f'Recorded purchase {quantity} share(s) of {name} at ${price}/stock'
                 return render_template("buy.html", message=message)
             else:
                 return apology("Not enough cash")
         else:
-            message = "Invalid symbol"
-            return render_template("buy.html", message=message)
+            return apology("Invalid symbol")
     else:
         return render_template("buy.html")
 
@@ -227,7 +229,37 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol")
+        req_quantity = request.form.get("shares")
+        if not req_quantity.isdigit():
+            return apology("Quantity must be positive integer")
+        req_quantity = int(req_quantity)
+        stock = lookup(symbol)
+        if not stock:
+            return apology("Invalid symbol")
+        price = stock["price"]
+        name = stock["name"]
+
+
+        time = datetime.datetime.now()
+
+        username = session.get("username")
+        owned_quantity = db.execute("SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
+                                    username=username, symbol=symbol)[0]["SUM(quantity)"]
+        if owned_quantity and owned_quantity>=req_quantity:
+            total_value = req_quantity * price
+            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :symbol, :price, :time, :quantity)",
+                       username=username, symbol=symbol, price=price, time=time, quantity=-req_quantity)
+            db.execute("UPDATE users SET cash = cash+:total_value WHERE username=:username",
+                       total_value=total_value, username=username)
+            message = f"Recorded sold {req_quantity} share(s) of {name} total ${total_value}"
+            return render_template("sell.html", message = message)
+        else:
+            return apology("Insufficient shares")
+        # if db.execute()
+    else:
+        return render_template("sell.html")
 
 
 def errorhandler(e):

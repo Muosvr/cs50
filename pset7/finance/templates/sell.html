@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <form action="/sell" method="post">
+        <div class="form-group">
+            <input autofocus class="form-control" name="symbol" placeholder="Symbol" type="text"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="shares" placeholder="Quantity" type="number"/>
+        </div>
+        <button class="btn btn-primary" type="submit">Sell</button>
+    </form>
+    <div>{{message}}</div>
+
+{% endblock %}
