@@ -41,26 +41,31 @@ class Stock:
         self.owner = owner
         self.symbol = symbol
         self.name = lookup(self.symbol)["name"]
-        self.update_price()
-        self.update_quantity()
+        self.update()
 
     #to be tested
-    def update_quantity(self):
+    def get_quantity(self):
         self.quantity = db.execute(
             "SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
             username = self.owner, symbol = self.symbol)[0]["SUM(quantity)"]
-    def update_price(self):
+
+    def get_price(self):
         self.price = lookup(self.symbol)["price"]
+
+    def update(self):
+        self.get_price()
+        self.get_quantity()
+        self.total_value = "{0:.2f}".format(self.price * self.quantity)
 
 @app.route("/")
 @login_required
 def index():
     """Show portfolio of stocks"""
     stocks = []
-    total_value = 0
     username = session.get("username")
     symbol_list = db.execute("SELECT stock_symbol FROM history WHERE username=:username GROUP BY stock_symbol", username=username)
     cash_balance = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
+    total_value = cash_balance
 
     for sym in symbol_list:
         symbol = sym["stock_symbol"]
@@ -81,30 +86,30 @@ def buy():
     if request.method=="POST":
         symbol = request.form.get("symbol")
         quantity = request.form.get("quantity")
-        if not quantity.isdigit():
+        if not quantity.isdigit() or int(quantity)<=0:
             return apology("Quantity must be a positive integer")
         quantity = int(quantity)
         price = 0
         message = ""
-        time = datetime.datetime.now()
+        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         response = lookup(symbol)
-
-        if response:
-            price = response["price"]
-            name = response["name"]
-            cash = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
-            cost = price * float(quantity)
-            if cash >= cost:
-                cash -= cost
-                db.execute("UPDATE users SET cash=:cash WHERE username=:username", cash=cash, username=username)
-                db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity)",
-                            username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity)
-                message = f'Recorded purchase {quantity} share(s) of {name} at ${price}/stock'
-                return render_template("buy.html", message=message)
-            else:
-                return apology("Not enough cash")
-        else:
+        if not response:
             return apology("Invalid symbol")
+
+        price = response["price"]
+        name = response["name"]
+        cash = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
+        cost = price * float(quantity)
+        status = "bought"
+        if cash >= cost:
+            cash -= cost
+            db.execute("UPDATE users SET cash=:cash WHERE username=:username", cash=cash, username=username)
+            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity, stock_name, status) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity, :name, :status)",
+                        username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity, name=name, status=status)
+            message = f'Recorded purchase {quantity} share(s) of {name} at ${price}/stock'
+            return render_template("buy.html", message=message)
+        else:
+            return apology("Not enough cash")
     else:
         return render_template("buy.html")
 
@@ -113,7 +118,10 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+    username = session.get("username")
+    history=db.execute("SELECT stock_symbol, unit_price, time, quantity, stock_name, status FROM history WHERE username=:username",
+                       username=username)
+    return render_template("history.html", history=history)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -218,11 +226,18 @@ def register():
         #inser new user into database
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
                     username=username, hash = hash)
-        return redirect("/")
+        message = "Please log in"
+        return render_template("login.html", message=message)
         #TODO add redirect to success message
 
     else:
         return render_template("register.html")
+
+@app.route("/change_pass", methods=["GET", "POST"])
+@login_required
+# def change_pass():
+    # if request.method == "POST":
+
 
 
 @app.route("/sell", methods=["GET", "POST"])
@@ -232,25 +247,27 @@ def sell():
     if request.method == "POST":
         symbol = request.form.get("symbol")
         req_quantity = request.form.get("shares")
-        if not req_quantity.isdigit():
+        if not req_quantity.isdigit() or int(req_quantity)<=0:
             return apology("Quantity must be positive integer")
         req_quantity = int(req_quantity)
-        stock = lookup(symbol)
-        if not stock:
-            return apology("Invalid symbol")
-        price = stock["price"]
-        name = stock["name"]
+        status = "sold"
 
-
-        time = datetime.datetime.now()
+        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         username = session.get("username")
-        owned_quantity = db.execute("SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
-                                    username=username, symbol=symbol)[0]["SUM(quantity)"]
-        if owned_quantity and owned_quantity>=req_quantity:
+        owned_stock = db.execute("SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
+                                    username=username, symbol=symbol)
+        if owned_stock:
+            owned_quantity = owned_stock[0]["SUM(quantity)"]
+            stock = lookup(symbol)
+            price = stock["price"]
+            name = stock["name"]
+        else:
+            owned_quantity = 0
+        if owned_quantity>=req_quantity:
             total_value = req_quantity * price
-            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity) VALUES (:username, :symbol, :price, :time, :quantity)",
-                       username=username, symbol=symbol, price=price, time=time, quantity=-req_quantity)
+            db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity, stock_name, status) VALUES (:username, :symbol, :price, :time, :quantity, :name, :status)",
+                       username=username, symbol=symbol, price=price, time=time, quantity=-req_quantity, name=name, status=status)
             db.execute("UPDATE users SET cash = cash+:total_value WHERE username=:username",
                        total_value=total_value, username=username)
             message = f"Recorded sold {req_quantity} share(s) of {name} total ${total_value}"
