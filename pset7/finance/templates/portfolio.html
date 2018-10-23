@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block main %}
+    <div style="margin-bottom:10px">{{message}}</div>
     <table class="table">
         <tr>
             <th>Stock</th>
@@ -32,5 +33,13 @@
             <td>USD {{total_value}}</td>
         </tr>
     </table>
+    <form action="/add_cash" method="post">
+        <div class="form-group">
+            <div style="margin-bottom:10px">Add cash to your account</div>
+            <input class="form-control" name="add_cash" placeholder="amount to add" type="number"/>
+            <button class="btn btn-primary" type="submit">Add cash</button>
+        </div>
+
+    </form>
 
 {% endblock %}

@@ -55,7 +55,7 @@ class Stock:
     def update(self):
         self.get_price()
         self.get_quantity()
-        self.total_value = "{0:.2f}".format(self.price * self.quantity)
+        self.total_value = usd(self.price * self.quantity)
 
 @app.route("/")
 @login_required
@@ -74,7 +74,7 @@ def index():
         total_value += new_stock.quantity * new_stock.price
 
 
-    return render_template("portfolio.html", stocks = stocks, cash_balance="{0:.2f}".format(cash_balance), total_value="{0:.2f}".format(total_value))
+    return render_template("portfolio.html", stocks = stocks, cash_balance=usd(cash_balance), total_value=usd(total_value))
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -87,14 +87,14 @@ def buy():
         symbol = request.form.get("symbol")
         quantity = request.form.get("quantity")
         if not quantity.isdigit() or int(quantity)<=0:
-            return apology("Quantity must be a positive integer")
+            return apology("Quantity must be a positive integer", 400)
         quantity = int(quantity)
         price = 0
         message = ""
         time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         response = lookup(symbol)
         if not response:
-            return apology("Invalid symbol")
+            return apology("Invalid symbol", 400)
 
         price = response["price"]
         name = response["name"]
@@ -109,7 +109,7 @@ def buy():
             message = f'Recorded purchase {quantity} share(s) of {name} at ${price}/stock'
             return render_template("buy.html", message=message)
         else:
-            return apology("Not enough cash")
+            return apology("Not enough cash", 400)
     else:
         return render_template("buy.html")
 
@@ -203,20 +203,20 @@ def register():
 
         #check if username is blank
         if not request.form.get("username"):
-            return apology("Please provide user name", 403)
+            return apology("Please provide user name", 400)
 
         #check if password is blank
         if not request.form.get("password"):
-            return apology("Please provide password", 403)
+            return apology("Please provide password", 400)
 
         #enter password again to confirm
         if not request.form.get("password") == request.form.get("confirmation"):
-            return apology("Password does not match", 403)
+            return apology("Password does not match", 400)
 
         #check if user name already exist
         if db.execute("SELECT username from users WHERE username = :username",
                                         username=request.form.get("username")):
-            return apology("Username already exist", 403)
+            return apology("Username already exist", 400)
 
         #generate password hash and get username
         hash = generate_password_hash(request.form.get("password"))
@@ -232,13 +232,38 @@ def register():
 
     else:
         return render_template("register.html")
+@app.route("/add_cash", methods=["GET", "POST"])
+@login_required
+def add_cash():
+    if request.method == "POST":
+        username = session.get("username")
+        add_cash = int(request.form.get("add_cash"))
+        if add_cash <= 0:
+            return apology("Cash amount must be positive integer", 400)
+        db.execute("UPDATE users SET cash=cash+:add_cash WHERE username=:username",
+                   add_cash=add_cash, username=username)
+        flash(f"{add_cash} USD has been added to your account")
+        return redirect("/")
+    else:
+        return render_template("portfolio.html")
 
 @app.route("/change_pass", methods=["GET", "POST"])
 @login_required
-# def change_pass():
-    # if request.method == "POST":
-
-
+def change_pass():
+    if request.method == "POST":
+        username = session.get("username")
+        hash = db.execute("SELECT hash FROM users WHERE username=:username", username=username)[0]["hash"]
+        if not check_password_hash(hash, request.form.get("old_password")):
+            return apology("Incorrect password", 403)
+        if request.form.get("new_password") != request.form.get("confirmation"):
+            return apology("Passwords do not match", 400)
+        new_hash = generate_password_hash(request.form.get("new_password"))
+        db.execute("UPDATE users SET hash=:new_hash WHERE username=:username", new_hash=new_hash, username=username)
+        session.clear()
+        flash("Password change successful! Please log in with new password.")
+        return render_template("login.html")
+    else:
+        return render_template("ChangePass.html")
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
@@ -248,7 +273,7 @@ def sell():
         symbol = request.form.get("symbol")
         req_quantity = request.form.get("shares")
         if not req_quantity.isdigit() or int(req_quantity)<=0:
-            return apology("Quantity must be positive integer")
+            return apology("Quantity must be positive integer", 400)
         req_quantity = int(req_quantity)
         status = "sold"
 
@@ -273,7 +298,7 @@ def sell():
             message = f"Recorded sold {req_quantity} share(s) of {name} total ${total_value}"
             return render_template("sell.html", message = message)
         else:
-            return apology("Insufficient shares")
+            return apology("Insufficient shares", 400)
         # if db.execute()
     else:
         return render_template("sell.html")
