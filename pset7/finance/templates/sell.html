@@ -7,7 +7,12 @@
 {% block main %}
     <form action="/sell" method="post">
         <div class="form-group">
-            <input autofocus class="form-control" name="symbol" placeholder="Symbol" type="text"/>
+            <!--<input autofocus class="form-control" name="symbol" placeholder="Symbol" type="text"/>-->
+            <select name="symbol">
+                {% for option in options %}
+                    <option value={{option}}>{{option}}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="form-group">
             <input class="form-control" name="shares" placeholder="Quantity" type="number"/>

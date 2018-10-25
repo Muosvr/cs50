@@ -18,10 +18,13 @@
             <th>Price</th>
             <th>Symbol</th>
         </tr>
+        {% if name %}
         <tr>
-            <td>{{name}}</td>
-            <td>{{price}}</td>
-            <td>{{symbol}}</td>
+                <td>{{name}}</td>
+                <td>{{price | usd}}</td>
+                <td>{{symbol}}</td>
+
         </tr>
+        {% endif %}
     </table>
 {% endblock %}

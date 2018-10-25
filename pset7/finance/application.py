@@ -85,7 +85,7 @@ def buy():
 
     if request.method=="POST":
         symbol = request.form.get("symbol")
-        quantity = request.form.get("quantity")
+        quantity = request.form.get("shares")
         if not quantity.isdigit() or int(quantity)<=0:
             return apology("Quantity must be a positive integer", 400)
         quantity = int(quantity)
@@ -106,7 +106,7 @@ def buy():
             db.execute("UPDATE users SET cash=:cash WHERE username=:username", cash=cash, username=username)
             db.execute("INSERT INTO history (username, stock_symbol, unit_price, time, quantity, stock_name, status) VALUES (:username, :stock_symbol, :unit_price, :time, :quantity, :name, :status)",
                         username = username, stock_symbol=symbol, unit_price=price, time=time, quantity=quantity, name=name, status=status)
-            message = f'Recorded purchase {quantity} share(s) of {name} at ${price}/stock'
+            message = f'Recorded purchase {quantity} share(s) of {name} for total of {usd(cost)}, your remaining cash is {usd(cash)}'
             return render_template("buy.html", message=message)
         else:
             return apology("Not enough cash", 400)
@@ -177,21 +177,22 @@ def logout():
 def quote():
     """Get stock quote."""
     name = ""
-    price = ""
+    price = 0
     symbol = ""
     message = ""
     if request.method == "POST":
         response = lookup(request.form.get("symbol"))
         if response:
             name = response["name"]
-            price = response["price"]
+            price = float(response["price"])
             symbol = response["symbol"]
             return render_template("quote.html", name=name, price=price, symbol=symbol)
         else:
-            message = "Symbol not found!"
-            return render_template("quote.html", name=name, price=price, symbol=symbol, message=message)
+            return apology("Symbol not found!", 400)
+            # message = "Symbol not found!"
+            # return render_template("quote.html", name=name, price=price, symbol=symbol, message=message)
     else:
-        return render_template("quote.html", name=name, price=price, symbol=symbol)
+        return render_template("quote.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -269,6 +270,7 @@ def change_pass():
 @login_required
 def sell():
     """Sell shares of stock"""
+    username = session.get("username")
     if request.method == "POST":
         symbol = request.form.get("symbol")
         req_quantity = request.form.get("shares")
@@ -279,7 +281,7 @@ def sell():
 
         time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        username = session.get("username")
+
         owned_stock = db.execute("SELECT SUM(quantity) FROM history WHERE username=:username GROUP BY stock_symbol HAVING stock_symbol=:symbol",
                                     username=username, symbol=symbol)
         if owned_stock:
@@ -295,13 +297,18 @@ def sell():
                        username=username, symbol=symbol, price=price, time=time, quantity=-req_quantity, name=name, status=status)
             db.execute("UPDATE users SET cash = cash+:total_value WHERE username=:username",
                        total_value=total_value, username=username)
-            message = f"Recorded sold {req_quantity} share(s) of {name} total ${total_value}"
+            cash = db.execute("SELECT cash FROM users WHERE username=:username", username=username)[0]["cash"]
+            message = f"Recorded sold {req_quantity} share(s) of {name} total {usd(total_value)}, your new cash balance is {usd(cash)}"
             return render_template("sell.html", message = message)
         else:
             return apology("Insufficient shares", 400)
         # if db.execute()
     else:
-        return render_template("sell.html")
+        stock_options = db.execute("SELECT stock_symbol FROM history WHERE username=:username GROUP BY stock_symbol", username=username)
+        stock_options = [s["stock_symbol"] for s in stock_options]
+
+        # print(f"Stock options: {stock_options}")
+        return render_template("sell.html", options = stock_options)
 
 
 def errorhandler(e):
