@@ -5,6 +5,8 @@ from flask import Flask, jsonify, render_template, request
 from cs50 import SQL
 from helpers import lookup
 
+test = 1
+
 # Configure application
 app = Flask(__name__)
 
@@ -40,9 +42,20 @@ def articles():
 def search():
     """Search for places that match query"""
     # TODO
-    keyword = request.args.get('q') + "%"
-    locations = db.execute("SELECT * FROM places WHERE postal_code LIKE :keyword OR place_name LIKE :keyword OR admin_name1 LIKE :keyword OR admin_code1 LIKE :keyword", keyword=keyword)
-    return jsonify([locations])
+    query = request.args.get('q')
+    # query = query.replace(",", "")
+    query = [item.strip() for item in query.split(",")]
+    # query = [keyword+"*" for keyword in query]
+    if len(query) == 1:
+        locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 OR admin_name1 LIKE :keyword1", keyword1=query[0]+"%")
+    elif len(query) == 2:
+        locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_name1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
+        if not locations:
+            locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_code1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
+    if not locations:
+        keywords = " ".join(query)
+        locations = db.execute("SELECT * FROM places_fts WHERE places_fts MATCH :keywords", keywords=keywords)
+    return jsonify(locations)
 
 @app.route("/update")
 def update():

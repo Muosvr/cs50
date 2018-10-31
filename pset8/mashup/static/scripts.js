@@ -38,7 +38,7 @@ $(document).ready(function() {
     // Options for map
     // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     let options = {
-        center: {lat: 37.4236, lng: -122.1619}, // Stanford, California
+        center: {lat: 42.3770, lng: -71.1256}, // Stanford, California
         disableDefaultUI: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         maxZoom: 14,
@@ -98,7 +98,9 @@ function configure()
         templates: {
             suggestion: Handlebars.compile(
                 "<div>" +
-                "TODO" +
+                "{{place_name}}, " +
+                "{{admin_name1}}, " +
+                "{{postal_code}}" +
                 "</div>"
             )
         }
@@ -122,8 +124,8 @@ function configure()
     // Re-enable ctrl- and right-clicking (and thus Inspect Element) on Google Map
     // https://chrome.google.com/webstore/detail/allow-right-click/hompjdfbfmmmgflfjdlnkohcplmboaeo?hl=en
     document.addEventListener("contextmenu", function(event) {
-        event.returnValue = true; 
-        event.stopPropagation && event.stopPropagation(); 
+        event.returnValue = true;
+        event.stopPropagation && event.stopPropagation();
         event.cancelBubble && event.cancelBubble();
     }, true);
 
@@ -150,7 +152,7 @@ function search(query, syncResults, asyncResults)
         q: query
     };
     $.getJSON("/search", parameters, function(data, textStatus, jqXHR) {
-     
+
         // Call typeahead's callback with search results (i.e., places)
         asyncResults(data);
     });
@@ -184,7 +186,7 @@ function showInfo(marker, content)
 
 
 // Update UI's markers
-function update() 
+function update()
 {
     // Get map's bounds
     let bounds = map.getBounds();
