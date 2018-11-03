@@ -64,6 +64,29 @@ $(document).ready(function() {
 function addMarker(place)
 {
     // TODO
+    var latitude = parseFloat(place["latitude"]);
+    var longitude = parseFloat(place["longitude"]);
+    var myLatlng = {lat: latitude, lng: longitude};
+    var title = place["place_name"] + ", " + place["admin_name1"];
+    // console.log(place);
+
+    var marker = new google.maps.Marker({
+        position: myLatlng,
+        title: title
+    });
+
+
+    marker.setMap(map);
+    marker.addListener('click', function(){
+        var parameters = {geo: "02468"};
+        $.getJSON("/search", parameters, function(data){
+            console.log(data);
+            showInfo(marker, data);
+        });
+
+    });
+
+
 }
 
 

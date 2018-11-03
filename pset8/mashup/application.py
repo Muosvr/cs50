@@ -49,8 +49,9 @@ def search():
     if len(query) == 1:
         locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 OR admin_name1 LIKE :keyword1", keyword1=query[0]+"%")
     elif len(query) == 2:
-        locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_name1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
-        if not locations:
+        if len(query[1]) != 2:
+            locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_name1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
+        else:
             locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_code1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
     if not locations:
         keywords = " ".join(query)
