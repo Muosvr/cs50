@@ -68,7 +68,7 @@ function addMarker(place)
     var longitude = parseFloat(place["longitude"]);
     var myLatlng = {lat: latitude, lng: longitude};
     var title = place["place_name"] + ", " + place["admin_name1"];
-    // console.log(place);
+    console.log(place);
 
     var marker = new google.maps.Marker({
         position: myLatlng,
@@ -77,12 +77,33 @@ function addMarker(place)
 
 
     marker.setMap(map);
-    marker.addListener('click', function(){
-        var parameters = {geo: "02468"};
-        $.getJSON("/search", parameters, function(data){
+
+    marker.addListener('click', function() {
+        var parameters = {geo: place["postal_code"]};
+        // console.log(parameters);
+        info.close();
+        $.getJSON("/articles", parameters, function(data){
+
+            content = "<h3> Happening in " + place["place_name"] + ", " + place["admin_code1"] + "</h3>";
+            content += "<div class='newsContent'>";
+            var length = data.length;
+            if (length > 10){
+                length = 10;
+            }
+            for (i=0; i<length; i++){
+                content += "<div class = 'newsItem' >";
+                content += "<a class = 'newsLink'";
+                content += "href=" + data[i]["link"] + ">";
+
+                content += data[i]["title"];
+                content += "</a>";
+                content += "</div>";
+            }
+            content += "</div>";
             console.log(data);
-            showInfo(marker, data);
-        });
+            info.setContent(content);
+            info.open(map, marker);
+        })
 
     });
 
@@ -164,6 +185,11 @@ function configure()
 function removeMarkers()
 {
     // TODO
+    for (i=0; i<markers.length; i++){
+        markers[i].setMap(null);
+    }
+    markers = [];
+
 }
 
 

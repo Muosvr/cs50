@@ -43,20 +43,22 @@ def search():
     """Search for places that match query"""
     # TODO
     query = request.args.get('q')
-    # query = query.replace(",", "")
-    query = [item.strip() for item in query.split(",")]
-    # query = [keyword+"*" for keyword in query]
-    if len(query) == 1:
-        locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 OR admin_name1 LIKE :keyword1", keyword1=query[0]+"%")
-    elif len(query) == 2:
-        if len(query[1]) != 2:
-            locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_name1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
-        else:
-            locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_code1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
-    if not locations:
-        keywords = " ".join(query)
-        locations = db.execute("SELECT * FROM places_fts WHERE places_fts MATCH :keywords", keywords=keywords)
-    return jsonify(locations)
+    if query:
+        query = [item.strip() for item in query.split(",")]
+        # query = [keyword+"*" for keyword in query]
+        if len(query) == 1:
+            locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 OR admin_name1 LIKE :keyword1", keyword1=query[0]+"%")
+        elif len(query) == 2:
+            if len(query[1]) != 2:
+                locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_name1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
+            else:
+                locations = db.execute("SELECT * FROM places WHERE place_name LIKE :keyword1 AND admin_code1 LIKE :keyword2", keyword1=query[0]+"%", keyword2=query[1]+"%")
+        if not locations:
+            keywords = " ".join(query)
+            locations = db.execute("SELECT * FROM places_fts WHERE places_fts MATCH :keywords", keywords=keywords)
+        return jsonify(locations)
+    else:
+        return ""
 
 @app.route("/update")
 def update():
