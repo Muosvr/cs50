@@ -1,6 +1,7 @@
 # cs50 Projects
 
-* PSet 1: Intro to C
+### PSet 1
+Intro to C
 
 * PSet 2: Algorithums
 
