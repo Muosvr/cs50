@@ -8,7 +8,7 @@
   * Project: [music synthesizer](https://github.com/Muosvr/cs50/tree/master/pset3/music)
 
 ### PSet 4: Stacks, Pointers, Memory Allocation, Image Processing, Bitwise Operations
-  * Project: [image resize, processing, and recovery](https://github.com/Muosvr/cs50/tree/master/pset4)
+  * Project: [image resizing, processing, and recovery](https://github.com/Muosvr/cs50/tree/master/pset4)
 
 ### PSet 5: Memory and Data Structures: Hash Tables, Linkedlist, Trees
   * Project: [spell checker for large files](https://github.com/Muosvr/cs50/tree/master/pset5)
