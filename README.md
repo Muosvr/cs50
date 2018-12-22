@@ -1,4 +1,4 @@
-# cs50 Projects
+# Harvard cs50 Projects
 
 ### PSet 1: [Intro to C](https://github.com/Muosvr/cs50/tree/master/pset1)
 
