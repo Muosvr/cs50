@@ -1,4 +1,4 @@
-# Harvard cs50 Projects
+# Harvard CS50 Projects
 
 ### PSet 1: [Intro to C](https://github.com/Muosvr/cs50/tree/master/pset1)
 
@@ -13,7 +13,7 @@
 ### PSet 5: Memory and Data Structures: Hash Tables, Linkedlist, Trees
   * Project: [spell checker for large files](https://github.com/Muosvr/cs50/tree/master/pset5)
 
-### PSet 6: Internet and server: IP, TCP, HTTP, HTML, CSS, Python, Flask 
+### PSet 6: Internet and Server: IP, TCP, HTTP, HTML, CSS, Python, Flask 
   * Project: [a web app that checks similarities between two text bodies](https://github.com/Muosvr/cs50/tree/master/pset6/similarities)
 
 ### Pset 7: Flask, MVC, SQL
