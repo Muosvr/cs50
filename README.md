@@ -1,13 +1,13 @@
 # cs50 Projects
 
-### PSet 1
-Intro to C
+* PSet 1 Intro to C
 
 * PSet 2: Algorithums
 
 * PSet 3: Algorithums, Sorting, Complexity
 
-* PSet 4: Stacks, Pointers, Memory Allocation, Image Processing | Project: recover images from memory card
+* PSet 4: Stacks, Pointers, Memory Allocation, Image Processing </br>
+* * Project: recover images from memory card
 
 * PSet 5: Data Structures: Hash Tables, Linkedlist, Trees
 
