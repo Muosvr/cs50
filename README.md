@@ -1,13 +1,13 @@
 # cs50 Projects
 
-* PSet 1 [Intro to C](https://github.com/Muosvr/cs50/tree/master/pset1)
+### PSet 1 [Intro to C](https://github.com/Muosvr/cs50/tree/master/pset1)
 
-* PSet 2: [Algorithums, Encryption/decryption, Debugging](https://github.com/Muosvr/cs50/tree/master/pset2)
+### PSet 2: [Algorithums, Encryption/decryption, Debugging](https://github.com/Muosvr/cs50/tree/master/pset2)
 
-* PSet 3: Algorithums, Sorting, Complexity
-  Project: [music synthesizer](https://github.com/Muosvr/cs50/tree/master/pset3/music)
+### PSet 3: Algorithums, Sorting, Complexity
+  * Project: [music synthesizer](https://github.com/Muosvr/cs50/tree/master/pset3/music)
 
-* PSet 4: Stacks, Pointers, Memory Allocation, Image Processing, Bitwise Operations
+### PSet 4: Stacks, Pointers, Memory Allocation, Image Processing, Bitwise Operations
   * Project: [image resize, processing, and recovery](https://github.com/Muosvr/cs50/tree/master/pset4)
 
 * PSet 5: Memory and Data Structures: Hash Tables, Linkedlist, Trees
